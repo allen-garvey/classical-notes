@@ -1,0 +1,8 @@
+<div class="row">
+	{{#each sections }}
+		<div class="col-md-3">
+			<h2><a href="{{ this.url }}">{{ this.display }}</a></h2>
+			<p>{{ this.description }}</p>
+		</div>
+	{{/each}}
+</div>
