@@ -1,11 +1,18 @@
 "use strict";
-
+var environment = require(__dirname + '/environment.js');
 var models = require(__dirname + '/models/models.js');
-//configuration for app
 
+//configuration for app
 var config = {};
-config.port = 3000; //port app runs on
-config.baseUrl = 'http://localhost:3000/';
+
+if(environment.CURRENT === environment.LOCAL){
+	config.port = 3000; //port app runs on
+	config.baseUrl = 'http://localhost:3000/';
+}
+else{
+	config.port = 80;
+	config.baseUrl = 'http://localhost/';
+}
 
 config.siteTitle = 'Classical Notes';
 config.siteDescription = 'A classical music catalog of composers and their pieces';
