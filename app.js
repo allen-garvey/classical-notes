@@ -1,8 +1,12 @@
 "use strict";
 //requires
 var config = require(__dirname + '/config.js');
+var environment = require(__dirname + '/environment.js');
 var express = require('express');
 var models = require(__dirname + '/models/models.js');
+if(environment.CURRENT === environment.LOCAL){
+	var query = require(__dirname + '/models/query-mock.js');
+}
 //set handlebars file extension to .hbs and set default layout to main
 var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
 var bodyParser = require('body-parser');
@@ -39,6 +43,7 @@ for(let key in models){
 		var context = config.getDefaultContext();
 		context.header = {headerTitle: model.display, headerText: model.description};
 		context.model = model;
+		context.items = query.getAll(context.model);
 		res.render('index', context);
 	});
 	//new routes
@@ -47,14 +52,33 @@ for(let key in models){
 		context.model = model;
 		res.render('new', context);
 	});
+	//show routes for individual items
+	app.get('/'+model.url+'/:id', function(req,res,next){
+		var id = parseInt(req.params.id);
+		//make sure id is number
+		if(isNaN(id)){
+			next();
+			return;
+		}
+		var context = config.getDefaultContext();
+		context.model = model;
+		context.item = query.get(context.model, id);
+		if(!context.item){
+			next();
+			return;
+		}
+		context.partialPath = function(){ return model.dbTable + '/show';}
+		res.render('show', context);
+	});
 }
 
 
 //default route when nothing else matches
 app.use(function(req,res){
-  var context = {header:{headerTitle: "404", headerText: "Page not found"}};
-  res.status(404);
-  res.render('404', context);
+	var context = config.getDefaultContext();
+	context.header = {headerTitle: '404', headerText: 'Page not found'};
+	res.status(404);
+	res.render('404', context);
 });
 
 
