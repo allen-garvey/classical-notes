@@ -1,1 +1,15 @@
-<a class="btn btn-success" href="{{model.url}}/new">Add a {{ model.singular }}</a>
+<a class="btn btn-success" href="{{baseUrl}}{{model.url}}/new">Add a {{ model.singular }}</a>
+<ul class="list-group index-list">
+	{{#each items }}
+		<li class="list-group-item">
+			<a href="{{../baseUrl}}{{../model.url}}/{{this.id}}">{{ this }}</a>
+			<div>
+				<a href="{{../baseUrl}}{{../model.url}}/{{this.id}}/edit" class="btn btn-default">Edit</a>
+				<form class="form-inline" action="{{../baseUrl}}{{../model.url}}/{{this.id}}" method="POST">
+					<input type="hidden" name="method" value="delete" />
+					<input type="submit" class="btn btn-danger" value="Delete">
+				</form>
+			</div>
+		</li>
+	{{/each}}
+</ul>
