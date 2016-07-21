@@ -2,6 +2,7 @@
 
 var models = {};
 
+//function for abstract model data definition
 function Model(data){
 	for(var key in data){
 		this[key] = data[key];
@@ -9,7 +10,46 @@ function Model(data){
 	this.plural = this.plural || (this.singular + 's');
 	this.url = this.plural.replace(/\s/g, '-');
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
+	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 }
+
+//ORM function for concrete item
+models.Composer = function(data){
+	for(var key in data){
+		this[key] = data[key];
+	}
+}
+models.Composer.prototype.toString = function(){
+	return this.first_name + ' ' + this.last_name;
+}
+
+models.MusicalWork = function(data){
+	for(var key in data){
+		this[key] = data[key];
+	}
+}
+models.MusicalWork.prototype.toString = function(){
+	return this.title;
+}
+
+models.Movement = function(data){
+	for(var key in data){
+		this[key] = data[key];
+	}
+}
+models.Movement.prototype.toString = function(){
+	return this.title;
+}
+
+models.Tag = function(data){
+	for(var key in data){
+		this[key] = data[key];
+	}
+}
+models.Tag.prototype.toString = function(){
+	return this.content;
+}
+
 
 models.composers = new Model({
 	display : 'Composers',
