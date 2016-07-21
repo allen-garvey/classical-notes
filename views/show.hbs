@@ -1,0 +1,11 @@
+<div class="show-header">
+	<h1 class="show-heading">{{ item }}</h1>
+	<a href="{{baseUrl}}{{model.url}}/{{item.id}}/edit" class="btn btn-default">Edit</a>
+	<form class="form-inline" action="{{baseUrl}}{{model.url}}/{{item.id}}" method="POST">
+		<input type="hidden" name="method" value="delete" />
+		<input type="submit" class="btn btn-danger" value="Delete">
+	</form>
+</div>
+<div class="show-content">
+	{{> (partialPath) }}	
+</div>
