@@ -2,3 +2,29 @@
 .navbar{
 	margin-bottom: 0;
 }
+
+/*Index pages*/
+.index-list li{
+	display: flex;
+	justify-content: space-between;
+}
+.index-list li > a{
+	align-self: center;
+}
+
+/*Show pages*/
+.show-header .btn{
+	vertical-align: text-bottom;
+}
+.show-header .show-heading{
+	display: inline-block;
+}
+.form-inline{
+	display: inline-block;
+}
+.show-header > *{
+	margin-right: 1em;
+}
+.show-header:last-child{
+	margin-right: 0;
+}
