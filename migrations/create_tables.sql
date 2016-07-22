@@ -17,7 +17,7 @@ CREATE TABLE musical_works (
   title VARCHAR(255) NOT NULL,
   composer_id INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
-  CONSTRAINT fk_mw_composer FOREIGN KEY (composer_id) REFERENCES composers (id)
+  CONSTRAINT fk_mw_composer FOREIGN KEY (composer_id) REFERENCES composers (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE movements (
@@ -27,7 +27,7 @@ CREATE TABLE movements (
   order INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY(musical_work_id, order),
-  CONSTRAINT fk_mv_musical_work FOREIGN KEY (musical_work_id) REFERENCES musical_works (id)
+  CONSTRAINT fk_mv_musical_work FOREIGN KEY (musical_work_id) REFERENCES musical_works (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tags (
@@ -43,8 +43,8 @@ CREATE TABLE movements_tags (
   movement_id INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
   UNIQUE KEY(tag_id, movement_id),
-  CONSTRAINT fk_mvtg_tag FOREIGN KEY (tag_id) REFERENCES tags (id),
-  CONSTRAINT fk_mvtg_mvt FOREIGN KEY (movement_id) REFERENCES movements (id),
+  CONSTRAINT fk_mvtg_tag FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  CONSTRAINT fk_mvtg_mvt FOREIGN KEY (movement_id) REFERENCES movements (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
