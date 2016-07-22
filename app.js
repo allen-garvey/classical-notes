@@ -70,6 +70,37 @@ for(let key in models){
 		context.partialPath = function(){ return model.dbTable + '/show';}
 		res.render('show', context);
 	});
+	//update and delete an individual model routes
+	app.post('/'+model.url+'/:id', function(req,res,next){
+		if(!req.body.method || !req.body.method.match(/^(DELETE|PATCH)$/i)){
+			next();
+			return;
+		}
+		var id = parseInt(req.params.id);
+		//make sure id is number
+		if(isNaN(id)){
+			next();
+			return;
+		}
+		var context = config.getDefaultContext();
+		context.model = model;
+		context.item = query.get(context.model, id);
+		if(!context.item){
+			next();
+			return;
+		}
+		//delete action
+		if(req.body.method.toUpperCase() == 'DELETE'){
+			//redirect to index
+			res.redirect('/'+model.url);
+		}
+		//update action
+		else{
+			next();
+			return;
+		}
+
+	});
 }
 
 
