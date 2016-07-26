@@ -4,9 +4,15 @@ var config = require(__dirname + '/config.js');
 var environment = require(__dirname + '/environment.js');
 var express = require('express');
 var models = require(__dirname + '/models/models.js');
+
+//setup database connection
+var mysql = require('mysql');
+var pool = mysql.createPool(config.db);
+
 if(environment.CURRENT === environment.LOCAL){
 	var query = require(__dirname + '/models/query-mock.js');
 }
+
 //set handlebars file extension to .hbs and set default layout to main
 var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
 var bodyParser = require('body-parser');
@@ -43,8 +49,17 @@ for(let key in models){
 		var context = config.getDefaultContext();
 		context.header = {headerTitle: model.display, headerText: model.description};
 		context.model = model;
-		context.items = query.getAll(context.model);
-		res.render('index', context);
+		// context.items = query.getAll(context.model);
+		console.log(context.model.getAllQuery);
+		pool.query(context.model.getAllQuery, function(err, rows, fields){
+	    	if(err){
+	     		next(err);
+	      		return;
+			}
+			context.items = rows;
+	    	res.render('index', context);
+		});
+		
 	});
 	//new routes
 	app.get('/'+model.url+'/new', function(req,res){
@@ -91,8 +106,16 @@ for(let key in models){
 		}
 		//delete action
 		if(req.body.method.toUpperCase() == 'DELETE'){
-			//redirect to index
-			res.redirect('/'+model.url);
+			console.log(context.model.deleteQuery);
+			pool.query(context.model.deleteQuery, [id],
+				function(err, result){
+					if(err){
+						next(err);
+						return;
+					}
+					//redirect to index
+					res.redirect('/'+model.url);
+			});
 		}
 		//update action
 		else{
