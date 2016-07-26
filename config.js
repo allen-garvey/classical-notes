@@ -5,6 +5,8 @@ var models = require(__dirname + '/models/models.js');
 //configuration for app
 var config = {};
 
+config.db = require(__dirname + '/db.js');
+
 if(environment.CURRENT === environment.LOCAL){
 	config.port = 3000; //port app runs on
 	config.baseUrl = 'http://localhost:3000/';
