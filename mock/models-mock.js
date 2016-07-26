@@ -49,7 +49,7 @@ models.tags = 		{
 						'3': new Tag('serious'),
 						'4': new Tag('slow')
 					};
-
+//add item id key as property to individual items
 for(let modelName in models){
 	var model = models[modelName];
 	for(let idNum in model){
