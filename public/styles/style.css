@@ -11,6 +11,9 @@
 .index-list li > a{
 	align-self: center;
 }
+.index-subheader{
+	margin-bottom: 1em;
+}
 
 /*Show pages*/
 .show-header .btn{
