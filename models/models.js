@@ -11,7 +11,39 @@ function Model(data){
 	this.url = this.plural.replace(/\s/g, '-');
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
+	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
+	this.getAllQuery = 'SELECT ' + this.dbFields().join(',') + ' FROM ' + this.dbTable;
+	this.getQuery = this.getAllQuery + ' WHERE id = ?';
+	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + this.dbFields().map(function(field){return field+'=?';}).join(',') + ' WHERE id=?';
 }
+
+Model.prototype.dbFields = function(){
+	return this.fields.map(function(field){ return field.name;});
+};
+
+//takes request body and prepares to be inserted/updated
+//into database
+//returns array of data to be inserted or false
+//if required fields are missing
+Model.prototype.cleanRequest = function(requestBody){
+	var ret = [];
+	var fields = this.fields;
+	for(var i = 0; i < fields.length; i++){
+		var field = fields[i];
+		var rawData = requestBody[field.name];
+		//check if field is not given
+		if(rawData === undefined){
+			if(!field.non_required){
+				return false;
+			}
+			//empty field is not required,
+			//so convert to null for database
+			rawData = null;
+		}
+		ret.push(rawData);
+	}
+	return ret;
+};
 
 //ORM function for concrete item
 models.Composer = function(data){
@@ -69,7 +101,8 @@ models.composers = new Model({
 				{
 					name: 'dob',
 					type: 'date',
-					display: 'Date of birth'
+					display: 'Date of birth',
+					non_required: true
 				}
 			  ]
 });
