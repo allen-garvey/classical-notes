@@ -1,20 +1,21 @@
 {
-  "name": "node-express-base-project",
+  "name": "classical-notes",
   "version": "1.0.0",
-  "description": "Starter project for Node with Express",
+  "description": "A classical music catalog of composers and their works",
   "main": "app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/allen-garvey/node-express-base-project.git"
+    "url": "https://github.com/allen-garvey/classical-notes.git"
   },
   "author": "Allen Garvey",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.15.1",
     "express": "^4.13.4",
-    "express-handlebars": "^3.0.0"
+    "express-handlebars": "^3.0.0",
+    "mysql": "^2.11.1"
   }
 }
