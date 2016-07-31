@@ -45,7 +45,7 @@ app.get('/', function(req,res){
 for(let key in models){
 	let model = models[key];
 	//index routes
-	app.get('/'+model.url, function(req,res){
+	app.get('/'+model.url, function(req,res,next){
 		var context = config.getDefaultContext();
 		context.header = {headerTitle: model.display, headerText: model.description};
 		context.model = model;
@@ -56,7 +56,8 @@ for(let key in models){
 	     		next(err);
 	      		return;
 			}
-			context.items = rows;
+			var orm = models[model.orm];
+			context.items = rows.map(function(raw_item){return new orm(raw_item);});
 	    	res.render('index', context);
 		});
 		
