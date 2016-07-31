@@ -1,8 +1,10 @@
+SET FOREIGN_KEY_CHECKS=0;
 DROP TABLE IF EXISTS `composers`;
 DROP TABLE IF EXISTS `musical_works`;
 DROP TABLE IF EXISTS `movements`;
 DROP TABLE IF EXISTS `tags`;
 DROP TABLE IF EXISTS `movements_tags`;
+SET FOREIGN_KEY_CHECKS=1;
 
 CREATE TABLE composers (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
@@ -17,24 +19,24 @@ CREATE TABLE musical_works (
   title VARCHAR(255) NOT NULL,
   composer_id INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
-  CONSTRAINT fk_mw_composer FOREIGN KEY (composer_id) REFERENCES composers (id) ON DELETE CASCADE ON UPDATE CASCADE
+  FOREIGN KEY (composer_id) REFERENCES composers (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE movements (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   title VARCHAR(255) NOT NULL,
   musical_work_id INT UNSIGNED NOT NULL,
-  order INT UNSIGNED NOT NULL,
+  order_num INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY(musical_work_id, order),
-  CONSTRAINT fk_mv_musical_work FOREIGN KEY (musical_work_id) REFERENCES musical_works (id) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE(musical_work_id, order_num),
+  FOREIGN KEY (musical_work_id) REFERENCES musical_works (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE tags (
   id INT UNSIGNED NOT NULL AUTO_INCREMENT,
   content VARCHAR(255) NOT NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY (content)
+  UNIQUE(content)
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 CREATE TABLE movements_tags (
@@ -42,9 +44,9 @@ CREATE TABLE movements_tags (
   tag_id INT UNSIGNED NOT NULL,
   movement_id INT UNSIGNED NOT NULL,
   PRIMARY KEY  (id),
-  UNIQUE KEY(tag_id, movement_id),
-  CONSTRAINT fk_mvtg_tag FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE ON UPDATE CASCADE,
-  CONSTRAINT fk_mvtg_mvt FOREIGN KEY (movement_id) REFERENCES movements (id) ON DELETE CASCADE ON UPDATE CASCADE
+  UNIQUE(tag_id, movement_id),
+  FOREIGN KEY (tag_id) REFERENCES tags (id) ON DELETE CASCADE ON UPDATE CASCADE,
+  FOREIGN KEY (movement_id) REFERENCES movements (id) ON DELETE CASCADE ON UPDATE CASCADE
 )ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 
