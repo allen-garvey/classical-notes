@@ -6,7 +6,8 @@ if(process.env.RDS_HOSTNAME){
 				host     : process.env.RDS_HOSTNAME,
 				user     : process.env.RDS_USERNAME,
 				password : process.env.RDS_PASSWORD,
-				port     : process.env.RDS_PORT
+				port     : process.env.RDS_PORT,
+				database : 'classical_notes'
 			};
 }
 //local db configuration
