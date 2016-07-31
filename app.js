@@ -1,16 +1,16 @@
 "use strict";
-//requires
-var config = require(__dirname + '/config.js');
-var environment = require(__dirname + '/environment.js');
+var path = require('path');
+var config = require(path.join(__dirname, 'config.js'));
+var environment = require(path.join(__dirname, 'environment.js'));
 var express = require('express');
-var models = require(__dirname + '/models/models.js');
+var models = require(path.join(__dirname, 'models', 'models.js'));
 
 //setup database connection
 var mysql = require('mysql');
 var pool = mysql.createPool(config.db);
 
 if(environment.CURRENT === environment.LOCAL){
-	var query = require(__dirname + '/models/query-mock.js');
+	var query = require(path.join(__dirname, 'models', 'query-mock.js'));
 }
 
 //set handlebars file extension to .hbs and set default layout to main

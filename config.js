@@ -1,18 +1,18 @@
 "use strict";
-var environment = require(__dirname + '/environment.js');
-var models = require(__dirname + '/models/models.js');
+var path = require('path');
+var environment = require(path.join(__dirname, 'environment.js'));
+var models = require(path.join(__dirname, 'models', 'models.js'));
 
 //configuration for app
 var config = {};
 
-config.db = require(__dirname + '/db.js');
+config.db = require(path.join(__dirname, 'db.js'));
 
+config.port = process.env.PORT || 3000;
 if(environment.CURRENT === environment.LOCAL){
-	config.port = 3000; //port app runs on
 	config.baseUrl = 'http://localhost:3000/';
 }
 else{
-	config.port = 80;
 	config.baseUrl = 'http://localhost/';
 }
 

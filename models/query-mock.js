@@ -1,7 +1,8 @@
 "use strict";
+var path = require('path');
 //interface for retrieving models from database or mock objects
-var models = require(__dirname + '/models.js');
-var mock = require(__dirname + '/../mock/models-mock.js');
+var models = require(path.join(__dirname, 'models.js'));
+var mock = require(path.join(__dirname, '/../', 'mock', 'models-mock.js'));
 
 
 var query = {};
