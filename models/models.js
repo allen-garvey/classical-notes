@@ -12,7 +12,7 @@ function Model(data){
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
-	this.getAllQuery = 'SELECT ' + this.dbFields().join(',') + ' FROM ' + this.dbTable;
+	this.getAllQuery = 'SELECT id,' + this.dbFields().join(',') + ' FROM ' + this.dbTable;
 	this.getQuery = this.getAllQuery + ' WHERE id = ?';
 	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + this.dbFields().map(function(field){return field+'=?';}).join(',') + ' WHERE id=?';
 }
@@ -131,7 +131,7 @@ models.movements = new Model({
 					display: 'Title'
 				},
 				{
-					name: 'order',
+					name: 'order_num',
 					type: 'number',
 					display: 'Order in movement'
 				}
