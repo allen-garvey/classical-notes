@@ -1,7 +1,7 @@
 var db = {
 	host  : 'localhost',
  	user  : 'cn_user',
-  	password: 'default',
+  	password: '',
   	database: 'classical_notes'
 };
 
