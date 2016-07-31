@@ -9,10 +9,6 @@ var models = require(path.join(__dirname, 'models', 'models.js'));
 var mysql = require('mysql');
 var pool = mysql.createPool(config.db);
 
-if(environment.CURRENT === environment.LOCAL){
-	var query = require(path.join(__dirname, 'models', 'query-mock.js'));
-}
-
 //set handlebars file extension to .hbs and set default layout to main
 var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
 var bodyParser = require('body-parser');
@@ -49,7 +45,6 @@ for(let key in models){
 		var context = config.getDefaultContext();
 		context.header = {headerTitle: model.display, headerText: model.description};
 		context.model = model;
-		// context.items = query.getAll(context.model);
 		console.log(context.model.getAllQuery);
 		pool.query(context.model.getAllQuery, function(err, rows, fields){
 	    	if(err){
@@ -78,13 +73,23 @@ for(let key in models){
 		}
 		var context = config.getDefaultContext();
 		context.model = model;
-		context.item = query.get(context.model, id);
-		if(!context.item){
-			next();
-			return;
-		}
-		context.partialPath = function(){ return model.dbTable + '/show';}
-		res.render('show', context);
+		
+		pool.query(context.model.getQuery, [id], function(err, rows, fields){
+	    	if(err){
+	     		next(err);
+	      		return;
+			}
+			if(rows.length === 0){
+				next();
+				return;
+			}	
+			var orm = models[model.orm];
+			context.item = new orm(rows[0]);
+	    	context.partialPath = function(){ return model.dbTable + '/show';}
+			res.render('show', context);
+		});
+
+		
 	});
 	//update and delete an individual model routes
 	app.post('/'+model.url+'/:id', function(req,res,next){
