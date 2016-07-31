@@ -1,6 +1,6 @@
 "use strict";
 
-//elastic beanstalk
+//elastic beanstalk db configuration
 if(process.env.RDS_HOSTNAME){
 	var db = {
 				host     : process.env.RDS_HOSTNAME,
@@ -9,6 +9,7 @@ if(process.env.RDS_HOSTNAME){
 				port     : process.env.RDS_PORT
 			};
 }
+//local db configuration
 else{
 	var db = {
 				host  : 'localhost',
