@@ -9,12 +9,9 @@ var config = {};
 config.db = require(path.join(__dirname, 'db.js'));
 
 config.port = process.env.PORT || 3000;
-if(environment.CURRENT === environment.LOCAL){
-	config.baseUrl = 'http://localhost:3000/';
-}
-else{
-	config.baseUrl = 'http://localhost/';
-}
+
+//used for links to resources in html
+config.baseUrl = '/';
 
 config.siteTitle = 'Classical Notes';
 config.siteDescription = 'A classical music catalog of composers and their pieces';
