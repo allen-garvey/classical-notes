@@ -1,6 +1,5 @@
 "use strict";
 var path = require('path');
-var environment = require(path.join(__dirname, 'environment.js'));
 var models = require(path.join(__dirname, 'models', 'models.js'));
 
 //configuration for app
