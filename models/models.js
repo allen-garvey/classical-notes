@@ -15,6 +15,11 @@ function Model(data){
 	this.getAllQuery = 'SELECT id,' + this.dbFields().join(',') + ' FROM ' + this.dbTable;
 	this.getQuery = this.getAllQuery + ' WHERE id = ?';
 	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + this.dbFields().map(function(field){return field+'=?';}).join(',') + ' WHERE id=?';
+	var insertFieldPlaceholders = this.fields.map(function(){ return '?'; }).join(',');
+	var fieldNames = this.fields.map(function(field){return field.name;}).join(',');
+	this.insertQuery = 'INSERT INTO ' + this.dbTable + ' (' + fieldNames + ') VALUES (' + insertFieldPlaceholders + ')';
+	var updateFieldPlaceholders = this.fields.map(function(field){return field.name + '= ?';}).join(',');
+	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + updateFieldPlaceholders + ' WHERE id=?';
 }
 
 Model.prototype.dbFields = function(){
@@ -32,7 +37,7 @@ Model.prototype.cleanRequest = function(requestBody){
 		var field = fields[i];
 		var rawData = requestBody[field.name];
 		//check if field is not given
-		if(rawData === undefined){
+		if(rawData === undefined || rawData === ''){
 			if(!field.non_required){
 				return false;
 			}
