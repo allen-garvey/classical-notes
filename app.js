@@ -57,11 +57,38 @@ for(let key in models){
 		});
 		
 	});
-	//new routes
+	//routes for forms to create new models
 	app.get('/'+model.url+'/new', function(req,res){
+		if(req.error){
+			console.log('Request contains error');
+		}
 		var context = config.getDefaultContext();
 		context.model = model;
 		res.render('new', context);
+	});
+	//create new model route
+	app.post('/'+model.url, function(req,res,next){
+		var modelData = model.cleanRequest(req.body);
+		//returns false if there is error in request
+		if(!modelData){
+			//errors, so redirect to form so they can try again
+			res.redirect('/'+model.url+'/new');
+			return;
+		}
+		pool.query(model.insertQuery, modelData,
+			function(err, result){
+				//problem saving in the database
+				if(err){
+					//err.message contains message
+					//TODO attach error to req somehow
+					//along with previously submitted data
+					console.log(err);
+					res.redirect('/'+model.url+'/new');
+					return;
+				}
+				//redirect to index
+				res.redirect('/'+model.url);
+		});
 	});
 	//show routes for individual items
 	app.get('/'+model.url+'/:id', function(req,res,next){
@@ -91,6 +118,7 @@ for(let key in models){
 
 		
 	});
+
 	//update and delete an individual model routes
 	app.post('/'+model.url+'/:id', function(req,res,next){
 		if(!req.body.method || !req.body.method.match(/^(DELETE|PATCH)$/i)){
