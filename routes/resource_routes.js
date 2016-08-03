@@ -16,6 +16,10 @@ var pool = mysql.createPool(config.db);
 
 //resource routes for models
 for(let key in models){
+	//don't iterate over ORMS
+	if(key.match(/^[A-Z]/)){
+		continue;
+	}
 	let model = models[key];
 	//index routes
 	router.get('/'+model.url, function(req,res,next){
