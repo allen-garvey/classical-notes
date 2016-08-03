@@ -1,4 +1,5 @@
 "use strict";
+var async = require('async');
 
 var models = {};
 
@@ -22,9 +23,37 @@ function Model(data){
 	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + updateFieldPlaceholders + ' WHERE id=?';
 }
 
+//returns an array of the database names of the fields in the model
 Model.prototype.dbFields = function(){
 	return this.fields.map(function(field){ return field.name;});
 };
+
+//returns all related models that required for the drop-downs
+//this is identified by the field in the model fields array containing a 'model' property
+//on the new and edit form input views in the form [{'name':  'composers','items': [ModelOrms]}]
+//pool is the database pool to be used
+//doneCallback is called when retrieving all models are done - it is passed an error and array of results
+Model.prototype.getRelatedFields = function(pool, doneCallback){
+	// if(!this.relatedFields){
+	// 	doneCallback(null, []);
+	// 	return;
+	// }
+	async.map(this.fields.filter(function(field){return field.model;}), function(item, done){
+		var model = models[item.model];
+		pool.query(model.getAllQuery, function(err, rows, fields){
+	    	if(err){
+	     		done(err, null);
+	      		return;
+			}
+			var orm = models[model.orm];
+			var items = rows.map(function(raw_item){return new orm(raw_item);});
+			var ret = {name: item.model, items: items};
+	    	done(null, ret);
+	    	return;
+		});
+	}, doneCallback);
+};
+
 
 //takes request body and prepares to be inserted/updated
 //into database
@@ -121,6 +150,11 @@ models.musicalWorks = new Model({
 					name: 'title',
 					type: 'text',
 					display: 'Title'
+				},
+				{
+					name: 'composer_id',
+					model: 'composers',
+					display: 'Composer'
 				}
 			  ]
 });
@@ -139,6 +173,11 @@ models.movements = new Model({
 					name: 'order_num',
 					type: 'number',
 					display: 'Order in movement'
+				},
+				{
+					name: 'musical_work_id',
+					model: 'musicalWorks',
+					display: 'Parent Work'
 				}
 			  ]
 });
@@ -155,6 +194,10 @@ models.tags = new Model({
 				}
 			  ]
 });
+
+
+
+
 
 
 module.exports = models;
