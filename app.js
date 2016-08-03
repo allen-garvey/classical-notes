@@ -2,11 +2,6 @@
 var path = require('path');
 var config = require(path.join(__dirname, 'config.js'));
 var express = require('express');
-// var models = require(path.join(__dirname, 'models', 'models.js'));
-
-//setup database connection
-// var mysql = require('mysql');
-// var pool = mysql.createPool(config.db);
 
 //set handlebars file extension to .hbs and set default layout to main
 var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
