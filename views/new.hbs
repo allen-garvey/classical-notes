@@ -1,10 +1,21 @@
-<form action="{{baseUrl}}{{model.url}}" method="POST">
-	{{#each model.fields }}
-		<div class="form-group">
-			<label>{{this.display}}
-					<input type="{{this.type}}" name="{{this.name}}" />
-			</label>
+<div class="input-form-wrapper">
+	{{#if errors}}
+		<div class="alert alert-danger" role="alert">
+			<ul>
+				{{#each errors}}
+					<li>{{this}}</li>
+				{{/each}}
+			</ul>
 		</div>
-	{{/each}}
-	<input type="submit" value="Save"/>
-</form>
+	{{/if}}
+	<form action="{{baseUrl}}{{model.url}}" method="POST">
+		{{#each model.fields }}
+			<div class="form-group">
+				<label>{{this.display}}
+						<input type="{{this.type}}" name="{{this.name}}" />
+				</label>
+			</div>
+		{{/each}}
+		<input type="submit" value="Save"/>
+	</form>
+</div>
