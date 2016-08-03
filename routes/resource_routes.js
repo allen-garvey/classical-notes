@@ -35,15 +35,27 @@ for(let key in models){
 		
 	});
 	//routes for forms to create new models
-	router.get('/'+model.url+'/new', function(req,res){
+	router.get('/'+model.url+'/new', function(req,res,next){
 		var context = config.getDefaultContext();
 		if(req.session.errors){
 			context.errors = req.session.errors;
 			//delete it from session so errors are only displayed once
 			delete req.session.errors;
 		}
-		context.model = model;
-		res.render('new', context);
+		model.getRelatedFields(pool, function(err, relatedFields){
+			if(err){
+				next(err);
+				return;
+			}
+			context.model = model;
+			//add items as a list of items on field
+			relatedFields.forEach(function(field){
+				var modelField = context.model.fields.find(function(item){return item.model === field.name;});
+				modelField.items = field.items;
+			});
+			res.render('new', context);
+		});
+		
 	});
 	//create new model route
 	router.post('/'+model.url, function(req,res,next){

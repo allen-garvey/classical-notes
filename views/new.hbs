@@ -10,12 +10,24 @@
 	{{/if}}
 	<form action="{{baseUrl}}{{model.url}}" method="POST">
 		{{#each model.fields }}
-			<div class="form-group">
-				<label>{{this.display}}
-						<input type="{{this.type}}" name="{{this.name}}" />
-				</label>
-			</div>
+			{{#if this.model }}
+				<label>
+					{{this.display}}
+					<select name="{{this.name}}">
+						{{#each this.items}}
+							<option value="{{this.id}}">{{this}}</option>
+						{{/each}}
+					</select>
+				</label>		
+			{{else}}
+				<div class="form-group">
+					<label>{{this.display}}
+							<input type="{{this.type}}" name="{{this.name}}" />
+					</label>
+				</div>
+			{{/if}}
 		{{/each}}
+
 		<input type="submit" value="Save"/>
 	</form>
 </div>
