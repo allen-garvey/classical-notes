@@ -39,6 +39,8 @@ for(let key in models){
 		var context = config.getDefaultContext();
 		if(req.session.errors){
 			context.errors = req.session.errors;
+			//delete it from session so errors are only displayed once
+			delete req.session.errors;
 		}
 		context.model = model;
 		res.render('new', context);
