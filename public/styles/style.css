@@ -31,3 +31,8 @@
 .show-header:last-child{
 	margin-right: 0;
 }
+
+/*Edit and update page*/
+.input-form-wrapper{
+	margin-top: 2em;
+}
