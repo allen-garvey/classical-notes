@@ -5,7 +5,7 @@ var models = require(path.join(__dirname, 'models', 'models.js'));
 //configuration for app
 var config = {};
 
-config.db = require(path.join(__dirname, 'db.js'));
+config.db = require(path.join(__dirname, 'config', 'db.js'));
 config.port = process.env.PORT || 3000;
 
 /*
