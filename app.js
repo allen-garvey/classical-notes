@@ -21,7 +21,7 @@ app.use(bodyParser.json());
 
 //setup sessions
 var session = require('express-session');
-app.use(session({ secret: config.sessionSecret, cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
+app.use(session({ secret: config.sessionSecret, cookie: { maxAge: 3600000 }, resave: false, saveUninitialized: false }));
 
 //set port
 app.set('port', config.port);
