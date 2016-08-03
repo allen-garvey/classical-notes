@@ -3,22 +3,25 @@ var path = require('path');
 var config = require(path.join(__dirname, 'config.js'));
 var express = require('express');
 
-//set handlebars file extension to .hbs and set default layout to main
-var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
-var bodyParser = require('body-parser');
-
 //setup app
 var app = express();
+
 //use public dir for static files
 app.use(express.static('public'));
 
 //setup app views
+var handlebars = require('express-handlebars').create({defaultLayout:'main', extname: '.hbs'});
 app.engine('hbs', handlebars.engine);
 app.set('view engine', 'hbs');
 
 //setup body parser for post bodies
+var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+//setup sessions
+var session = require('express-session');
+app.use(session({ secret: 'keyboard cat', cookie: { maxAge: 60000 }, resave: false, saveUninitialized: false }));
 
 //set port
 app.set('port', config.port);
