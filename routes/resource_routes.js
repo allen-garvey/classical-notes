@@ -36,10 +36,10 @@ for(let key in models){
 	});
 	//routes for forms to create new models
 	router.get('/'+model.url+'/new', function(req,res){
-		if(req.error){
-			console.log('Request contains error');
-		}
 		var context = config.getDefaultContext();
+		if(req.session.errors){
+			context.errors = req.session.errors;
+		}
 		context.model = model;
 		res.render('new', context);
 	});
@@ -49,6 +49,7 @@ for(let key in models){
 		//returns false if there is error in request
 		if(!modelData){
 			//errors, so redirect to form so they can try again
+			req.session.errors = ['Some required fields were missing'];
 			res.redirect('/'+model.url+'/new');
 			return;
 		}
@@ -56,10 +57,9 @@ for(let key in models){
 			function(err, result){
 				//problem saving in the database
 				if(err){
-					//err.message contains message
-					//TODO attach error to req somehow
-					//along with previously submitted data
-					console.log(err);
+					//clean up db generated error message
+					var error_message = err.message.replace(/^\w*:\s?/i, '');
+					req.session.errors = [error_message];
 					res.redirect('/'+model.url+'/new');
 					return;
 				}
