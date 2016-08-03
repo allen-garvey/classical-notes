@@ -116,6 +116,15 @@ models.Tag.prototype.toString = function(){
 	return this.content;
 }
 
+models.MovementsTag = function(data){
+	for(var key in data){
+		this[key] = data[key];
+	}
+}
+models.MovementsTag.prototype.toString = function(){
+	return this.movement_id + ' ' + this.tag_id;
+}
+
 
 models.composers = new Model({
 	display : 'Composers',
@@ -191,6 +200,24 @@ models.tags = new Model({
 					name: 'content',
 					type: 'text',
 					display: 'Content'
+				}
+			  ]
+});
+
+models.movementsTags = new Model({
+	display : 'Movements Tags',
+	singular : 'movements tag',
+	description : 'Tags that have been added to movements',
+	fields : [
+				{
+					name: 'movement_id',
+					model: 'movements',
+					display: 'Movements'
+				},
+				{
+					name: 'tag_id',
+					model: 'tags',
+					display: 'Tags'
 				}
 			  ]
 });
