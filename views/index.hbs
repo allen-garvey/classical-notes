@@ -1,4 +1,9 @@
 <div class="index-subheader">
+	{{#if flash}}
+		<div class="alert alert-info" role="alert">
+			{{flash.message}}
+		</div>
+	{{/if}}
 	<a class="btn btn-success" href="{{baseUrl}}{{model.url}}/new">Add a {{ model.singular }}</a>
 </div>
 <ul class="list-group index-list">

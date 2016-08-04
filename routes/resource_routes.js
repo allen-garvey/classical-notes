@@ -26,6 +26,10 @@ for(let key in models){
 		var context = config.getDefaultContext();
 		context.header = {headerTitle: model.display, headerText: model.description};
 		context.model = model;
+		if(req.session.flash){
+			context.flash = req.session.flash;
+			delete req.session.flash;
+		}
 		console.log(context.model.getAllQuery);
 		pool.query(context.model.getAllQuery, function(err, rows, fields){
 	    	if(err){
@@ -81,6 +85,8 @@ for(let key in models){
 					res.redirect('/'+model.url+'/new');
 					return;
 				}
+				var newItem = new models[model.orm](req.body);
+				req.session.flash = {message: newItem.toString() + ' created'};
 				//redirect to index
 				res.redirect('/'+model.url);
 		});
