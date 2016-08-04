@@ -63,7 +63,28 @@ for(let key in models){
 			});
 			res.render('new', context);
 		});
-		
+	});
+	//routes for forms to edit models
+	router.get('/'+model.url+'/:id/edit', function(req,res,next){
+		var context = config.getDefaultContext();
+		if(req.session.errors){
+			context.errors = req.session.errors;
+			//delete it from session so errors are only displayed once
+			delete req.session.errors;
+		}
+		model.getRelatedFields(pool, function(err, relatedFields){
+			if(err){
+				next(err);
+				return;
+			}
+			context.model = model;
+			//add items as a list of items on field
+			relatedFields.forEach(function(field){
+				var modelField = context.model.fields.find(function(item){return item.model === field.name;});
+				modelField.items = field.items;
+			});
+			res.render('new', context);
+		});
 	});
 	//create new model route
 	router.post('/'+model.url, function(req,res,next){
