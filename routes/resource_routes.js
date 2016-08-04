@@ -49,6 +49,8 @@ for(let key in models){
 			context.errors = req.session.errors;
 			//delete it from session so errors are only displayed once
 			delete req.session.errors;
+			context.presetData = req.session.presetData;
+			delete req.session.presetData;
 		}
 		model.getRelatedFields(pool, function(err, relatedFields){
 			if(err){
@@ -93,6 +95,7 @@ for(let key in models){
 		if(!modelData){
 			//errors, so redirect to form so they can try again
 			req.session.errors = ['Some required fields were missing'];
+			req.session.presetData = req.body;
 			res.redirect('/'+model.url+'/new');
 			return;
 		}
@@ -103,6 +106,7 @@ for(let key in models){
 					//clean up db generated error message
 					var error_message = err.message.replace(/^\w*:\s?/i, '');
 					req.session.errors = [error_message];
+					req.session.presetData = req.body;
 					res.redirect('/'+model.url+'/new');
 					return;
 				}

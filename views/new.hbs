@@ -22,7 +22,7 @@
 			{{else}}
 				<div class="form-group">
 					<label>{{this.display}}
-							<input type="{{this.type}}" name="{{this.name}}" />
+							<input type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}}/>
 					</label>
 				</div>
 			{{/if}}
