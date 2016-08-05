@@ -8,7 +8,10 @@
 			</ul>
 		</div>
 	{{/if}}
-	<form action="{{baseUrl}}{{model.url}}" method="POST">
+	<form action="{{baseUrl}}{{model.url}}{{#if presetData.id}}/{{presetData.id}}{{/if}}" method="POST">
+		{{#if presetData.id}}
+			<input type="hidden" name="method" value="PATCH" />
+		{{/if}}
 		{{#each model.fields }}
 			{{#if this.model }}
 				<div class="form-group">
@@ -16,7 +19,7 @@
 						{{this.display}}
 						<select class="form-control" name="{{this.name}}">
 							{{#each this.items}}
-								<option value="{{this.id}}">{{this}}</option>
+								<option value="{{this.id}}" {{#if this.preselected}}selected="selected"{{/if}}>{{this}}</option>
 							{{/each}}
 						</select>
 					</label>

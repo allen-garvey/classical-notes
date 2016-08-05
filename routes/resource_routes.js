@@ -74,18 +74,38 @@ for(let key in models){
 			//delete it from session so errors are only displayed once
 			delete req.session.errors;
 		}
-		model.getRelatedFields(pool, function(err, relatedFields){
-			if(err){
-				next(err);
+		//retrieve model that is going to be update so we can pre-populate
+		//form inputs 
+		pool.query(model.getQuery, [req.params.id], function(savedModelErr, savedModel){
+			if(savedModelErr){
+				next(savedModelErr);
 				return;
 			}
-			context.model = model;
-			//add items as a list of items on field
-			relatedFields.forEach(function(field){
-				var modelField = context.model.fields.find(function(item){return item.model === field.name;});
-				modelField.items = field.items;
+			//no models found matching id
+			if(savedModel.length === 0){
+				next();
+				return;
+			}
+			context.presetData = savedModel[0];
+			context.presetData.id = req.params.id;
+			model.getRelatedFields(pool, function(err, relatedFields){
+				if(err){
+					next(err);
+					return;
+				}
+				context.model = model;
+				//add items as a list of items on field
+				relatedFields.forEach(function(field){
+					var modelField = context.model.fields.find(function(item){return item.model === field.name;});
+					modelField.items = field.items;
+					//preselect items in dropdowns
+					var preselectedItem = modelField.items.find(function(item){return item.id === context.presetData[modelField.name]; });
+					if(preselectedItem){
+						preselectedItem.preselected = true;
+					}
+				});
+				res.render('new', context);
 			});
-			res.render('new', context);
 		});
 	});
 	//create new model route
@@ -175,6 +195,7 @@ for(let key in models){
 					}
 					//redirect to index
 					res.redirect('/'+model.url);
+					return;
 			});
 		}
 		//update action
