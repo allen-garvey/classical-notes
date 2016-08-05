@@ -201,8 +201,30 @@ for(let key in models){
 		}
 		//update action
 		else{
-			next();
-			return;
+			var modelData = context.model.cleanRequest(req.body);
+			//create item so we can use string representation for flash messages
+			var item = context.model.ormFromCleanedRequest(modelData);
+			
+			//returns false if there is error in request
+			if(!modelData){
+				//errors, so redirect to form so they can try again
+				req.session.errors = ['Some required fields were missing'];
+				req.session.presetData = req.body;
+				return res.redirect('/'+model.url+'/new');
+			}
+			console.log(context.model.updateQuery);
+			modelData.push(id);
+			pool.query(context.model.updateQuery, modelData, function(err, results){
+				if(err){
+					return next(err);
+				}
+				//item with that id doesn't exist in database
+				if(results.affectedRows < 1){
+					return next();
+				}
+				req.session.flash = {message: item.toString() + ' updated'};
+				return res.redirect('/'+model.url);
+			});
 		}
 
 	});
