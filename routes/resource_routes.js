@@ -179,16 +179,11 @@ for(let key in models){
 		}
 		var context = config.getDefaultContext();
 		context.model = model;
-		context.item = query.get(context.model, id);
-		if(!context.item){
-			next();
-			return;
-		}
 		//delete action
 		if(req.body.method.toUpperCase() == 'DELETE'){
-			console.log(context.model.deleteQuery);
 			pool.query(context.model.deleteQuery, [id],
 				function(err, result){
+					console.log(result);
 					if(err){
 						next(err);
 						return;
