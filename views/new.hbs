@@ -11,23 +11,27 @@
 	<form action="{{baseUrl}}{{model.url}}" method="POST">
 		{{#each model.fields }}
 			{{#if this.model }}
-				<label>
-					{{this.display}}
-					<select name="{{this.name}}">
-						{{#each this.items}}
-							<option value="{{this.id}}">{{this}}</option>
-						{{/each}}
-					</select>
-				</label>		
+				<div class="form-group">
+					<label>
+						{{this.display}}
+						<select class="form-control" name="{{this.name}}">
+							{{#each this.items}}
+								<option value="{{this.id}}">{{this}}</option>
+							{{/each}}
+						</select>
+					</label>
+				</div>		
 			{{else}}
 				<div class="form-group">
 					<label>{{this.display}}
-							<input type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}}/>
+							<input class="form-control" type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}}/>
 					</label>
 				</div>
 			{{/if}}
 		{{/each}}
 
-		<input type="submit" value="Save"/>
+		<div class="form-group">
+			<input class="btn btn-success" type="submit" value="Save"/>
+		</div>
 	</form>
 </div>
