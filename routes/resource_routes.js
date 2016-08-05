@@ -168,47 +168,35 @@ for(let key in models){
 	//update and delete an individual model routes
 	router.post('/'+model.url+'/:id', function(req,res,next){
 		if(!req.body.method || !req.body.method.match(/^(DELETE|PATCH)$/i)){
-			next();
-			return;
+			return next();
 		}
 		var id = parseInt(req.params.id);
 		//make sure id is number
 		if(isNaN(id)){
-			next();
-			return;
+			return next();
 		}
 		var context = config.getDefaultContext();
 		context.model = model;
 		//delete action
 		if(req.body.method.toUpperCase() == 'DELETE'){
-			console.log(context.model.deleteQuery);
-
-			//retrieve item before deleting so we can be sure item exists,
-			//and display flash message item was deleted
-			pool.query(context.model.getQuery, [id], function(err, rows, fields){
+			//combine get and delete so that we can get item's string representation
+			//for flash message before deleting it
+			var getAndDeleteQuery = context.model.getQuery + ';' + context.model.deleteQuery;
+			console.log(getAndDeleteQuery);
+			pool.query(getAndDeleteQuery, [id, id], function(err, results){
 				if(err){
 					return next(err);
 				}
-				//no model found for id
-				if(rows.length === 0){
+				//check to see if item exists
+				if(results.length != 2 || results[0].length === 0){
 					return next();
 				}
 				//add deleted item name to session so we can display flash
 				//message that it was deleted
-				var newItem = new models[model.orm](rows[0]);
+				var newItem = new models[model.orm](results[0][0]);
 				req.session.flash = {message: newItem.toString() + ' deleted'};
 
-				//actually delete item
-				pool.query(context.model.deleteQuery, [id],
-					function(err, result){
-						if(err){
-							next(err);
-							return;
-						}
-						//redirect to index
-						res.redirect('/'+model.url);
-						return;
-				});
+				return res.redirect('/'+model.url);
 			});
 		}
 		//update action
