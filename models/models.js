@@ -79,6 +79,17 @@ Model.prototype.cleanRequest = function(requestBody){
 	return ret;
 };
 
+//takes array from cleanRequest and turns it into orm instance
+Model.prototype.ormFromCleanedRequest = function(cleanedRequest){
+	var fields = this.fields;
+	var data = {};
+	for(var i = 0; i < fields.length; i++){
+		var field = fields[i];
+		data[field.name] = cleanedRequest[i];
+	}
+	return new models[this.orm](data);
+};
+
 //ORM function for concrete item
 models.Composer = function(data){
 	for(var key in data){
