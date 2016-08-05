@@ -182,15 +182,33 @@ for(let key in models){
 		//delete action
 		if(req.body.method.toUpperCase() == 'DELETE'){
 			console.log(context.model.deleteQuery);
-			pool.query(context.model.deleteQuery, [id],
-				function(err, result){
-					if(err){
-						next(err);
+
+			//retrieve item before deleting so we can be sure item exists,
+			//and display flash message item was deleted
+			pool.query(context.model.getQuery, [id], function(err, rows, fields){
+				if(err){
+					return next(err);
+				}
+				//no model found for id
+				if(rows.length === 0){
+					return next();
+				}
+				//add deleted item name to session so we can display flash
+				//message that it was deleted
+				var newItem = new models[model.orm](rows[0]);
+				req.session.flash = {message: newItem.toString() + ' deleted'};
+
+				//actually delete item
+				pool.query(context.model.deleteQuery, [id],
+					function(err, result){
+						if(err){
+							next(err);
+							return;
+						}
+						//redirect to index
+						res.redirect('/'+model.url);
 						return;
-					}
-					//redirect to index
-					res.redirect('/'+model.url);
-					return;
+				});
 			});
 		}
 		//update action
