@@ -181,9 +181,9 @@ for(let key in models){
 		context.model = model;
 		//delete action
 		if(req.body.method.toUpperCase() == 'DELETE'){
+			console.log(context.model.deleteQuery);
 			pool.query(context.model.deleteQuery, [id],
 				function(err, result){
-					console.log(result);
 					if(err){
 						next(err);
 						return;
