@@ -9,8 +9,9 @@ function Model(data){
 		this[key] = data[key];
 	}
 	this.plural = this.plural || (this.singular + 's');
-	this.url = this.plural.replace(/\s/g, '-');
+	this.url = this.plural.toLowerCase().replace(/\s/g, '-');
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
+	//this.orm is name of ORM function on models
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
 	this.getAllQuery = 'SELECT id,' + this.dbFieldsSelect().join(',') + ' FROM ' + this.dbTable;
