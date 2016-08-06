@@ -13,7 +13,7 @@ function Model(data){
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
-	this.getAllQuery = 'SELECT id,' + this.dbFields().join(',') + ' FROM ' + this.dbTable;
+	this.getAllQuery = 'SELECT id,' + this.dbFieldsSelect().join(',') + ' FROM ' + this.dbTable;
 	this.getQuery = this.getAllQuery + ' WHERE id = ?';
 	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + this.dbFields().map(function(field){return field+'=?';}).join(',') + ' WHERE id=?';
 	var insertFieldPlaceholders = this.fields.map(function(){ return '?'; }).join(',');
@@ -25,7 +25,20 @@ function Model(data){
 
 //returns an array of the database names of the fields in the model
 Model.prototype.dbFields = function(){
-	return this.fields.map(function(field){ return field.name;});
+	return this.fields.map(function(field){ 
+		return field.name;
+	});
+};
+
+//returns an array of the database names of the fields in the model
+//used in select statements - converts date fields to proper format
+Model.prototype.dbFieldsSelect = function(){
+	return this.fields.map(function(field){ 
+		if(field.type === 'date'){
+			return 'DATE_FORMAT(' + field.name + ',"%Y-%m-%d") AS ' + field.name;
+		}
+		return field.name;
+	});
 };
 
 //returns all related models that required for the drop-downs
