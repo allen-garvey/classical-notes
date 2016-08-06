@@ -63,7 +63,7 @@ for(let key in models){
 				var modelField = context.model.fields.find(function(item){return item.model === field.name;});
 				modelField.items = field.items;
 			});
-			res.render('new', context);
+			res.render('create-edit-form', context);
 		});
 	});
 	//routes for forms to edit models
@@ -104,7 +104,7 @@ for(let key in models){
 						preselectedItem.preselected = true;
 					}
 				});
-				res.render('new', context);
+				res.render('create-edit-form', context);
 			});
 		});
 	});
