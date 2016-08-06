@@ -108,6 +108,11 @@ models.Composer = function(data){
 	for(var key in data){
 		this[key] = data[key];
 	}
+	//format dob if there is one
+	if(this.dob){
+		var dateSplit = this.dob.split('-');
+		this.dobFormatted = dateSplit[1] + '/' + dateSplit[2] + '/' + dateSplit[0];
+	}
 }
 models.Composer.prototype.toString = function(){
 	return this.first_name + ' ' + this.last_name;
