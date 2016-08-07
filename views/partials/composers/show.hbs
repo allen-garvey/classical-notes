@@ -1,3 +1,9 @@
 {{#if item.dobFormatted}}
 	<p>Born: {{item.dobFormatted}}</p>
 {{/if}}
+<h4>Musical Works</h4>
+<ul class="list-group">
+	{{#each item.musicalWorks}}
+		<li class="list-group-item"><a href="{{../baseUrl}}{{this.url}}/{{this.id}}">{{this}}</a></li>
+	{{/each}}
+</ul>
