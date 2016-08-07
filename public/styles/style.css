@@ -31,6 +31,9 @@
 .show-header:last-child{
 	margin-right: 0;
 }
+.show-content > *:first-child{
+	margin-bottom: 1em;
+}
 
 /*Edit and update page*/
 .input-form-wrapper{
