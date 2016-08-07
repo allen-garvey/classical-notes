@@ -1,7 +1,7 @@
 <a href="/movements-tags/new" class="btn btn-success">Add tag to movement</a>
 <h4>Movements tagged as {{item}}</h4>
-<ul>
+<ul class="list-group">
 	{{#each item.movements}}
-		<li><a href="{{../baseUrl}}{{this.url}}/{{this.id}}">{{this}}</a></li>
+		<li class="list-group-item"><a href="{{../baseUrl}}{{this.url}}/{{this.id}}">{{this}}</a></li>
 	{{/each}}
 </ul>
