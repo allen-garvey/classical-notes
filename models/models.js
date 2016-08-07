@@ -202,7 +202,14 @@ models.composers = new Model({
 				}
 			  ],
 	getQueryWithRelated :	function(){
-								return this.getQuery;
+								var modelTable = this.dbTable;
+								return  'SELECT ' +
+										this.dbFieldsSelect().join(',') + ',' + 
+										models.musicalWorks.dbFieldsSelect().join(',') + 
+										',' + models.musicalWorks.dbTable + '.id AS ' + models.musicalWorks.foreignKeyName +
+								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.musicalWorks.dbTable + ' ON ' + modelTable + '.id=' + models.musicalWorks.dbTable + '.' + this.foreignKeyName +
+								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
 
