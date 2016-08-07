@@ -159,6 +159,7 @@ for(let key in models){
 			}	
 			var orm = models[model.orm];
 			context.item = new orm(rows);
+			context.item.id = id;
 	    	context.partialPath = function(){ return model.dbTable + '/show';}
 			res.render('show', context);
 		});
