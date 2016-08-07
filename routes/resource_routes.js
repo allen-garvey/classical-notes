@@ -146,8 +146,9 @@ for(let key in models){
 		}
 		var context = config.getDefaultContext();
 		context.model = model;
-		
-		pool.query(context.model.getQuery, [id], function(err, rows, fields){
+		console.log(context.model.getQueryWithRelated());
+		pool.query(context.model.getQueryWithRelated(), [id], function(err, rows, fields){
+			console.log(rows);
 	    	if(err){
 	     		next(err);
 	      		return;
@@ -157,7 +158,7 @@ for(let key in models){
 				return;
 			}	
 			var orm = models[model.orm];
-			context.item = new orm(rows[0]);
+			context.item = new orm(rows);
 	    	context.partialPath = function(){ return model.dbTable + '/show';}
 			res.render('show', context);
 		});
