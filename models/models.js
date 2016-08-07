@@ -197,6 +197,8 @@ models.Composer.prototype.toString = function(){
 models.MusicalWork = function(data){
 	ORMCreator.call(this, data, models.musicalWorks);
 	ORMAddOne.call(this, data, 'composers');
+	var movementsPrefix = models.movements.dbTable + '_';
+	ORMAddMany.call(this, data, 'movements', movementsPrefix);
 }
 models.MusicalWork.prototype.toString = function(){
 	return this.title;
@@ -296,9 +298,13 @@ models.musicalWorks = new Model({
 										this.dbFieldsSelect().join(',') + ',' + 
 										models.composers.dbFieldsSelect().join(',') + 
 										',' + models.composers.dbTable + '.id AS ' + models.composers.foreignKeyName +
+										', '+ models.movements.dbFieldsSelect().map(function(field){return field + ' AS ' + models.movements.dbTable  + '_' + field.replace(/^.*\./, ''); }).join(',') +
+										',' + models.movements.dbTable + '.id AS ' + models.movements.foreignKeyName +
 								        ' FROM ' + modelTable +
 								        ' INNER JOIN ' + models.composers.dbTable + ' ON ' + models.composers.dbTable + '.id=' + modelTable + '.' + models.composers.foreignKeyName +
-								        ' WHERE ' + modelTable + '.id=?';
+								        ' LEFT JOIN ' + models.movements.dbTable + ' ON ' + models.movements.dbTable + '.' + this.foreignKeyName  + '=' + modelTable + '.id' +
+								        ' WHERE ' + modelTable + '.id=?' +
+								        ' ORDER BY ' + models.movements.dbTable + '.order_num';
 							}
 });
 
