@@ -37,11 +37,12 @@ Model.prototype.dbFields = function(){
 //returns an array of the database names of the fields in the model
 //used in select statements - converts date fields to proper format
 Model.prototype.dbFieldsSelect = function(){
+	var self = this;
 	return this.fields.map(function(field){ 
 		if(field.type === 'date'){
-			return 'DATE_FORMAT(' + field.name + ',"%Y-%m-%d") AS ' + field.name;
+			return 'DATE_FORMAT(' + self.dbTable + '.' + field.name + ',"%Y-%m-%d") AS ' + field.name;
 		}
-		return field.name;
+		return self.dbTable + '.' + field.name;
 	});
 };
 
@@ -266,13 +267,13 @@ models.tags = new Model({
 	getQueryWithRelated :	function(){
 								var modelTable = this.dbTable;
 								return  'SELECT ' +
-										this.dbFieldsSelect().map(function(field){ return modelTable + '.' + field;}).join(',') + ',' + 
-										models.movements.dbFieldsSelect().map(function(field){ return models.movements.dbTable + '.' + field;}).join(',') + 
+										this.dbFieldsSelect().join(',') + ',' + 
+										models.movements.dbFieldsSelect().join(',') + 
 										',' + models.movements.dbTable + '.id AS ' + models.movements.foreignKeyName +
 								        ' FROM ' + modelTable +
 								        ' INNER JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
 								        ' INNER JOIN ' + models.movements.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.movements.foreignKeyName + '=' + models.movements.dbTable + '.id ' +
-								        'WHERE ' + modelTable + '.id=?';
+								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
 
