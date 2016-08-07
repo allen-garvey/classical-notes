@@ -11,10 +11,13 @@ function Model(data){
 	this.plural = this.plural || (this.singular + 's');
 	this.url = this.plural.toLowerCase().replace(/\s/g, '-');
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
+	//default foreign key name used in other database tables
+	this.foreignKeyName = this.singular + '_id';
 	//this.orm is name of ORM function on models
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
-	this.getAllQuery = 'SELECT id,' + this.dbFieldsSelect().join(',') + ' FROM ' + this.dbTable;
+	this.getQueryBase = 'SELECT id,' + this.dbFieldsSelect().join(','); 
+	this.getAllQuery = this.getQueryBase + ' FROM ' + this.dbTable;
 	this.getQuery = this.getAllQuery + ' WHERE id = ?';
 	this.updateQuery = 'UPDATE ' + this.dbTable + ' SET ' + this.dbFields().map(function(field){return field+'=?';}).join(',') + ' WHERE id=?';
 	var insertFieldPlaceholders = this.fields.map(function(){ return '?'; }).join(',');
@@ -105,10 +108,22 @@ Model.prototype.ormFromCleanedRequest = function(cleanedRequest){
 };
 
 //ORM function for concrete item
-models.Composer = function(data){
-	for(var key in data){
-		this[key] = data[key];
+var ORMCreator = function(data, staticClass){
+	var fields = staticClass.fields;
+	//on inner joins multiple rows are returned
+	var modelData = Array.isArray(data) ? data[0] : data;
+	for (var i = 0; i < fields.length; i++) {
+		var fieldName = fields[i].name;
+		this[fieldName] = modelData[fieldName];
 	}
+	if(modelData.id){
+		this.id = modelData.id;
+	}
+	this.url = staticClass.url;
+}
+
+models.Composer = function(data){
+	ORMCreator.call(this, data, models.composers);
 	//format dob if there is one
 	if(this.dob){
 		var dateSplit = this.dob.split('-');
@@ -120,26 +135,32 @@ models.Composer.prototype.toString = function(){
 }
 
 models.MusicalWork = function(data){
-	for(var key in data){
-		this[key] = data[key];
-	}
+	ORMCreator.call(this, data, models.musicalWorks);
 }
 models.MusicalWork.prototype.toString = function(){
 	return this.title;
 }
 
 models.Movement = function(data){
-	for(var key in data){
-		this[key] = data[key];
-	}
+	ORMCreator.call(this, data, models.movements);
 }
 models.Movement.prototype.toString = function(){
 	return this.title;
 }
 
 models.Tag = function(data){
-	for(var key in data){
-		this[key] = data[key];
+	ORMCreator.call(this, data, models.tags);
+	
+	this.movements = [];
+	if(!Array.isArray(data)){
+		return;
+	}
+	var movementsORM = models[models.movements.orm];
+	for (var i = 0; i < data.length; i++) {
+		var row = data[i];
+		var movement = new movementsORM(row);
+		movement.id = row[models.movements.foreignKeyName];
+		this.movements.push(movement);
 	}
 }
 models.Tag.prototype.toString = function(){
@@ -178,7 +199,10 @@ models.composers = new Model({
 					non_required: true,
 					placeholder: 'YYYY-MM-DD'
 				}
-			  ]
+			  ],
+	getQueryWithRelated :	function(){
+								return this.getQuery;
+							}
 });
 
 models.musicalWorks = new Model({
@@ -196,7 +220,10 @@ models.musicalWorks = new Model({
 					model: 'composers',
 					display: 'Composer'
 				}
-			  ]
+			  ],
+	getQueryWithRelated :	function(){
+								return this.getQuery;
+							}
 });
 
 models.movements = new Model({
@@ -219,7 +246,10 @@ models.movements = new Model({
 					model: 'musicalWorks',
 					display: 'Parent Work'
 				}
-			  ]
+			  ],
+	getQueryWithRelated :	function(){
+								return this.getQuery;
+							}
 });
 
 models.tags = new Model({
@@ -232,8 +262,20 @@ models.tags = new Model({
 					type: 'text',
 					display: 'Content'
 				}
-			  ]
+			  ],
+	getQueryWithRelated :	function(){
+								var modelTable = this.dbTable;
+								return  'SELECT ' +
+										this.dbFieldsSelect().map(function(field){ return modelTable + '.' + field;}).join(',') + ',' + 
+										models.movements.dbFieldsSelect().map(function(field){ return models.movements.dbTable + '.' + field;}).join(',') + 
+										',' + models.movements.dbTable + '.id AS ' + models.movements.foreignKeyName +
+								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
+								        ' INNER JOIN ' + models.movements.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.movements.foreignKeyName + '=' + models.movements.dbTable + '.id ' +
+								        'WHERE ' + modelTable + '.id=?';
+							}
 });
+
 
 models.movementsTags = new Model({
 	display : 'Movements Tags',
@@ -250,7 +292,10 @@ models.movementsTags = new Model({
 					model: 'tags',
 					display: 'Tags'
 				}
-			  ]
+			  ],
+	getQueryWithRelated :	function(){
+								return this.getQuery;
+							}
 });
 
 
