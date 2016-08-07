@@ -201,6 +201,8 @@ models.Movement = function(data){
 	ORMAddMany.call(this, data, 'tags');
 	var musicalWorkPrefix = models.musicalWorks.dbTable + '_';
 	ORMAddOne.call(this, data, 'musicalWorks', musicalWorkPrefix);
+	var composerPrefix = models.composers.dbTable + '_';
+	ORMAddOne.call(this, data, 'composers', composerPrefix);
 }
 models.Movement.prototype.toString = function(){
 	return this.title;
@@ -322,8 +324,11 @@ models.movements = new Model({
 										models.tags.dbFieldsSelect().join(',') + 
 										',' + models.tags.dbTable + '.id AS ' + models.tags.foreignKeyName +
 										', '+ models.musicalWorks.dbFieldsSelect().map(function(field){return field + ' AS ' + models.musicalWorks.dbTable  + '_' + field.replace(/^.*\./, ''); }).join(',') +
+										', '+ models.composers.dbFieldsSelect().filter(function(field){return !field.match(/[()]/);}).map(function(field){return field + ' AS ' + models.composers.dbTable  + '_' + field.replace(/^.*\./, ''); }).join(',') +
+										', ' + models.composers.dbTable + '.id AS ' + models.composers.foreignKeyName + 
 								        ' FROM ' + modelTable +
 								        ' INNER JOIN ' + models.musicalWorks.dbTable + ' ON ' + models.musicalWorks.dbTable + '.id=' + modelTable + '.' + models.musicalWorks.foreignKeyName + 
+								        ' INNER JOIN ' + models.composers.dbTable + ' ON ' + models.composers.dbTable + '.id=' + models.musicalWorks.dbTable + '.' + models.composers.foreignKeyName +
 								        ' LEFT JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
 								        ' LEFT JOIN ' + models.tags.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id ' +
 								        ' WHERE ' + modelTable + '.id=?';

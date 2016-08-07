@@ -1,7 +1,10 @@
 <div><a href="/movements-tags/new" class="btn btn-success">Add tag to {{item}}</a></div>
 <div>
 	<p>
-		From <a href="{{baseUrl}}{{item.musicalWork.url}}/{{item.musicalWork.id}}">{{item.musicalWork}}</a>
+		From 
+			<a href="{{baseUrl}}{{item.musicalWork.url}}/{{item.musicalWork.id}}">{{item.musicalWork}}</a>
+		by
+			<a href="{{baseUrl}}{{item.composer.url}}/{{item.composer.id}}">{{item.composer}}</a>
 	</p>
 	<p>Order in work: {{item.order_num}}</p>
 </div>
