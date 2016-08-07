@@ -138,8 +138,8 @@ var ORMAddMany = function(data, staticClassNameToAdd, prefix){
 		var cleanedRow = {};
 		//remove fields that don't belong to ORM field,
 		//and allow prefixes for fields
-		for (var i = 0; i < staticClass.fields.length; i++) {
-			var field = staticClass.fields[i];
+		for (var j = 0; j < staticClass.fields.length; j++) {
+			var field = staticClass.fields[j];
 			var modelDataFieldName = prefix + field.name;
 			cleanedRow[field.name] = row[modelDataFieldName];
 		}
