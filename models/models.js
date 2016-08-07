@@ -199,6 +199,8 @@ models.MusicalWork.prototype.toString = function(){
 models.Movement = function(data){
 	ORMCreator.call(this, data, models.movements);
 	ORMAddMany.call(this, data, 'tags');
+	var musicalWorkPrefix = models.musicalWorks.dbTable + '_';
+	ORMAddOne.call(this, data, 'musicalWorks', musicalWorkPrefix);
 }
 models.Movement.prototype.toString = function(){
 	return this.title;
@@ -319,7 +321,9 @@ models.movements = new Model({
 										this.dbFieldsSelect().join(',') + ',' + 
 										models.tags.dbFieldsSelect().join(',') + 
 										',' + models.tags.dbTable + '.id AS ' + models.tags.foreignKeyName +
+										', '+ models.musicalWorks.dbFieldsSelect().map(function(field){return field + ' AS ' + models.musicalWorks.dbTable  + '_' + field.replace(/^.*\./, ''); }).join(',') +
 								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.musicalWorks.dbTable + ' ON ' + models.musicalWorks.dbTable + '.id=' + modelTable + '.' + models.musicalWorks.foreignKeyName + 
 								        ' LEFT JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
 								        ' LEFT JOIN ' + models.tags.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id ' +
 								        ' WHERE ' + modelTable + '.id=?';

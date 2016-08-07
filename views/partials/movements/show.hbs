@@ -1,6 +1,9 @@
 <div><a href="/movements-tags/new" class="btn btn-success">Add tag to {{item}}</a></div>
 <div>
-	<p>Order: {{item.order_num}}</p>
+	<p>
+		From <a href="{{baseUrl}}{{item.musicalWork.url}}/{{item.musicalWork.id}}">{{item.musicalWork}}</a>
+	</p>
+	<p>Order in work: {{item.order_num}}</p>
 </div>
 <h4>Tagged As</h4>
 <ul class="list-group">
