@@ -217,8 +217,14 @@ for(let key in models){
 			console.log(context.model.updateQuery);
 			modelData.push(id);
 			pool.query(context.model.updateQuery, modelData, function(err, results){
+				//problem saving in the database
 				if(err){
-					return next(err);
+					//clean up db generated error message
+					var error_message = err.message.replace(/^\w*:\s?/i, '');
+					req.session.errors = [error_message];
+					req.session.presetData = req.body;
+					res.redirect('/'+model.url+'/' + id + '/edit');
+					return;
 				}
 				//item with that id doesn't exist in database
 				if(results.affectedRows < 1){
