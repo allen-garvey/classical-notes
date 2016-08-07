@@ -157,7 +157,11 @@ models.Composer = function(data){
 }
 
 models.Composer.prototype.toString = function(){
-	return this.first_name + ' ' + this.last_name;
+	var name = this.first_name;
+	if(this.middle_name){
+		name = name + ' ' + this.middle_name;
+	}
+	return name + ' ' + this.last_name;
 }
 
 models.MusicalWork = function(data){
@@ -203,6 +207,12 @@ models.composers = new Model({
 					name: 'first_name',
 					type: 'text',
 					display: 'First Name'
+				},
+				{
+					name: 'middle_name',
+					type: 'text',
+					display: 'Middle Name',
+					non_required: true
 				},
 				{
 					name: 'last_name',
