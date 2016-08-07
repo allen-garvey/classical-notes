@@ -147,13 +147,23 @@ var ORMAddMany = function(data, staticClassNameToAdd){
 };
 
 //ORM function to add item to ORM object as property - used for has one relationship to original ORM instance
-var ORMAddOne = function(data, staticClassNameToAdd){
+//prefix is optional - it is the prefix added to field names, useful if models share the same
+//name for fields, and you select AS with a prefix
+var ORMAddOne = function(data, staticClassNameToAdd, prefix){
+	prefix = prefix || '';
 	var staticClass = models[staticClassNameToAdd];
 	var modelData = Array.isArray(data) ? data[0] : data;
+	//clean data so original item's data is not still there
+	var cleanedData = {};
+	for (var i = 0; i < staticClass.fields.length; i++) {
+		var field = staticClass.fields[i];
+		var modelDataFieldName = prefix + field.name;
+		cleanedData[field.name] = modelData[modelDataFieldName];
+	}
+	cleanedData.id = modelData[staticClass.foreignKeyName];
 	var ormConstructor = models[staticClass.orm];
-	var item = new ormConstructor(data);
+	var item = new ormConstructor(cleanedData);
 	if(!item.isInvalid){
-		item.id = modelData[staticClass.foreignKeyName];
 		//convert name to singular camel-case
 		var name = staticClassNameToAdd.replace(/s$/, '');
 		this[name] = item;
