@@ -12,7 +12,7 @@ function Model(data){
 	this.url = this.plural.toLowerCase().replace(/\s/g, '-');
 	this.dbTable = this.plural.toLowerCase().replace(/\s/g, '_');
 	//default foreign key name used in other database tables
-	this.foreignKeyName = this.singular.replace(/\s/g, '') + '_id';
+	this.foreignKeyName = this.singular.replace(/\s/g, '_') + '_id';
 	//this.orm is name of ORM function on models
 	this.orm = this.singular.split(/\s/).map(function(str){return str.charAt(0).toUpperCase() + str.slice(1);}).join('');
 	this.deleteQuery = 'DELETE FROM ' + this.dbTable + ' WHERE id = ?';
