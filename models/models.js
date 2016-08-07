@@ -111,11 +111,16 @@ Model.prototype.ormFromCleanedRequest = function(cleanedRequest){
 //ORM function for concrete item
 var ORMCreator = function(data, staticClass){
 	var fields = staticClass.fields;
-	//on inner joins multiple rows are returned
+	//on LEFT joins multiple rows are returned
 	var modelData = Array.isArray(data) ? data[0] : data;
 	for (var i = 0; i < fields.length; i++) {
-		var fieldName = fields[i].name;
-		this[fieldName] = modelData[fieldName];
+		var field = fields[i];
+		var fieldName = field.name;
+		var fieldValue = modelData[fieldName];
+		if(!fieldValue && !field.non_required){
+			this.isInvalid = true;
+		}
+		this[fieldName] = fieldValue;
 	}
 	if(modelData.id){
 		this.id = modelData.id;
@@ -133,6 +138,9 @@ var ORMAddMany = function(data, staticClassNameToAdd){
 	for (var i = 0; i < data.length; i++) {
 		var row = data[i];
 		var item = new ormConstructor(row);
+		if(item.isInvalid){
+			continue;
+		}
 		item.id = row[models[staticClassNameToAdd].foreignKeyName];
 		this[staticClassNameToAdd].push(item);
 	}
@@ -216,7 +224,7 @@ models.composers = new Model({
 										models.musicalWorks.dbFieldsSelect().join(',') + 
 										',' + models.musicalWorks.dbTable + '.id AS ' + models.musicalWorks.foreignKeyName +
 								        ' FROM ' + modelTable +
-								        ' INNER JOIN ' + models.musicalWorks.dbTable + ' ON ' + modelTable + '.id=' + models.musicalWorks.dbTable + '.' + this.foreignKeyName +
+								        ' LEFT JOIN ' + models.musicalWorks.dbTable + ' ON ' + modelTable + '.id=' + models.musicalWorks.dbTable + '.' + this.foreignKeyName +
 								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
@@ -270,8 +278,8 @@ models.movements = new Model({
 										models.tags.dbFieldsSelect().join(',') + 
 										',' + models.tags.dbTable + '.id AS ' + models.tags.foreignKeyName +
 								        ' FROM ' + modelTable +
-								        ' INNER JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
-								        ' INNER JOIN ' + models.tags.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id ' +
+								        ' LEFT JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
+								        ' LEFT JOIN ' + models.tags.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id ' +
 								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
@@ -294,8 +302,8 @@ models.tags = new Model({
 										models.movements.dbFieldsSelect().join(',') + 
 										',' + models.movements.dbTable + '.id AS ' + models.movements.foreignKeyName +
 								        ' FROM ' + modelTable +
-								        ' INNER JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
-								        ' INNER JOIN ' + models.movements.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.movements.foreignKeyName + '=' + models.movements.dbTable + '.id ' +
+								        ' LEFT JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
+								        ' LEFT JOIN ' + models.movements.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.movements.foreignKeyName + '=' + models.movements.dbTable + '.id ' +
 								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
