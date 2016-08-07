@@ -212,7 +212,7 @@ for(let key in models){
 				//errors, so redirect to form so they can try again
 				req.session.errors = ['Some required fields were missing'];
 				req.session.presetData = req.body;
-				return res.redirect('/'+model.url+'/new');
+				return res.redirect('/'+model.url+'/' + id + '/edit');
 			}
 			console.log(context.model.updateQuery);
 			modelData.push(id);
