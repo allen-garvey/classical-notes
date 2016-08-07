@@ -121,7 +121,22 @@ var ORMCreator = function(data, staticClass){
 		this.id = modelData.id;
 	}
 	this.url = staticClass.url;
-}
+};
+
+//ORM function to add items to ORM object as array - used for has many relationships
+var ORMAddMany = function(data, staticClassNameToAdd){
+	this[staticClassNameToAdd] = [];
+	if(!Array.isArray(data)){
+		return;
+	}
+	var ormConstructor = models[models[staticClassNameToAdd].orm];
+	for (var i = 0; i < data.length; i++) {
+		var row = data[i];
+		var item = new ormConstructor(row);
+		item.id = row[models[staticClassNameToAdd].foreignKeyName];
+		this[staticClassNameToAdd].push(item);
+	}
+};
 
 models.Composer = function(data){
 	ORMCreator.call(this, data, models.composers);
