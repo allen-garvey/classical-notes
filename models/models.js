@@ -161,6 +161,7 @@ models.MusicalWork.prototype.toString = function(){
 
 models.Movement = function(data){
 	ORMCreator.call(this, data, models.movements);
+	ORMAddMany.call(this, data, 'tags');
 }
 models.Movement.prototype.toString = function(){
 	return this.title;
@@ -263,7 +264,15 @@ models.movements = new Model({
 				}
 			  ],
 	getQueryWithRelated :	function(){
-								return this.getQuery;
+								var modelTable = this.dbTable;
+								return  'SELECT ' +
+										this.dbFieldsSelect().join(',') + ',' + 
+										models.tags.dbFieldsSelect().join(',') + 
+										',' + models.tags.dbTable + '.id AS ' + models.tags.foreignKeyName +
+								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.movementsTags.dbTable + ' ON ' + modelTable + '.id=' + models.movementsTags.dbTable + '.' + this.foreignKeyName +
+								        ' INNER JOIN ' + models.tags.dbTable + ' ON ' + models.movementsTags.dbTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id ' +
+								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
 
