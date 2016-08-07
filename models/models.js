@@ -146,6 +146,20 @@ var ORMAddMany = function(data, staticClassNameToAdd){
 	}
 };
 
+//ORM function to add item to ORM object as property - used for has one relationship to original ORM instance
+var ORMAddOne = function(data, staticClassNameToAdd){
+	var staticClass = models[staticClassNameToAdd];
+	var modelData = Array.isArray(data) ? data[0] : data;
+	var ormConstructor = models[staticClass.orm];
+	var item = new ormConstructor(data);
+	if(!item.isInvalid){
+		item.id = modelData[staticClass.foreignKeyName];
+		//convert name to singular camel-case
+		var name = staticClassNameToAdd.replace(/s$/, '');
+		this[name] = item;
+	}
+};
+
 models.Composer = function(data){
 	ORMCreator.call(this, data, models.composers);
 	//format dob if there is one
@@ -166,6 +180,7 @@ models.Composer.prototype.toString = function(){
 
 models.MusicalWork = function(data){
 	ORMCreator.call(this, data, models.musicalWorks);
+	ORMAddOne.call(this, data, 'composers');
 }
 models.MusicalWork.prototype.toString = function(){
 	return this.title;
@@ -256,7 +271,14 @@ models.musicalWorks = new Model({
 				}
 			  ],
 	getQueryWithRelated :	function(){
-								return this.getQuery;
+								var modelTable = this.dbTable;
+								return  'SELECT ' +
+										this.dbFieldsSelect().join(',') + ',' + 
+										models.composers.dbFieldsSelect().join(',') + 
+										',' + models.composers.dbTable + '.id AS ' + models.composers.foreignKeyName +
+								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.composers.dbTable + ' ON ' + models.composers.dbTable + '.id=' + modelTable + '.' + models.composers.foreignKeyName +
+								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
 
