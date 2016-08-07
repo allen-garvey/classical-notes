@@ -145,7 +145,9 @@ models.Composer = function(data){
 		var dateSplit = this.dob.split('-');
 		this.dobFormatted = dateSplit[1] + '/' + dateSplit[2] + '/' + dateSplit[0];
 	}
+	ORMAddMany.call(this, data, 'musicalWorks');
 }
+
 models.Composer.prototype.toString = function(){
 	return this.first_name + ' ' + this.last_name;
 }
@@ -166,19 +168,9 @@ models.Movement.prototype.toString = function(){
 
 models.Tag = function(data){
 	ORMCreator.call(this, data, models.tags);
-	
-	this.movements = [];
-	if(!Array.isArray(data)){
-		return;
-	}
-	var movementsORM = models[models.movements.orm];
-	for (var i = 0; i < data.length; i++) {
-		var row = data[i];
-		var movement = new movementsORM(row);
-		movement.id = row[models.movements.foreignKeyName];
-		this.movements.push(movement);
-	}
+	ORMAddMany.call(this, data, 'movements');
 }
+
 models.Tag.prototype.toString = function(){
 	return this.content;
 }
