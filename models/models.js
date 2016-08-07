@@ -125,7 +125,9 @@ var ORMCreator = function(data, staticClass){
 };
 
 //ORM function to add items to ORM object as array - used for has many relationships
-var ORMAddMany = function(data, staticClassNameToAdd){
+var ORMAddMany = function(data, staticClassNameToAdd, prefix){
+	prefix = prefix || '';
+	var staticClass = models[staticClassNameToAdd];
 	this[staticClassNameToAdd] = [];
 	if(!Array.isArray(data)){
 		return;
@@ -133,11 +135,19 @@ var ORMAddMany = function(data, staticClassNameToAdd){
 	var ormConstructor = models[models[staticClassNameToAdd].orm];
 	for (var i = 0; i < data.length; i++) {
 		var row = data[i];
-		var item = new ormConstructor(row);
+		var cleanedRow = {};
+		//remove fields that don't belong to ORM field,
+		//and allow prefixes for fields
+		for (var i = 0; i < staticClass.fields.length; i++) {
+			var field = staticClass.fields[i];
+			var modelDataFieldName = prefix + field.name;
+			cleanedRow[field.name] = row[modelDataFieldName];
+		}
+		var item = new ormConstructor(cleanedRow);
 		if(item.isInvalid){
 			continue;
 		}
-		item.id = row[models[staticClassNameToAdd].foreignKeyName];
+		item.id = row[staticClass.foreignKeyName];
 		this[staticClassNameToAdd].push(item);
 	}
 };
