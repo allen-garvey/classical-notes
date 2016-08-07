@@ -20,7 +20,7 @@ A web application that lets you create, edit update and delete information about
 
 * Sign into AWS console and create a new Node.js Elastic Beanstalk app
 * Attach an RDS instance to it using MySql
-* Create a zip file of this project (minus the node_modules directory, any hidden files and the license and README files)
+* Create a zip file of this project (minus the node_modules directory, the migrations directory, any hidden files and the license and README files)
 * Upload this zip file as the source code of your Elastic Beanstalk application
 * Navigate to your browser to your Elastic Beanstalk app's url
 
