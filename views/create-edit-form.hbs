@@ -27,7 +27,7 @@
 			{{else}}
 				<div class="form-group">
 					<label>{{this.display}}
-							<input class="form-control" type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}}/>
+							<input class="form-control" type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}} {{#if this.placeholder}} placeholder="{{this.placeholder}}" {{/if}}/>
 					</label>
 				</div>
 			{{/if}}

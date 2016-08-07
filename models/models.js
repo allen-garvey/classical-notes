@@ -175,7 +175,8 @@ models.composers = new Model({
 					name: 'dob',
 					type: 'date',
 					display: 'Date of birth',
-					non_required: true
+					non_required: true,
+					placeholder: 'YYYY-MM-DD'
 				}
 			  ]
 });
