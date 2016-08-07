@@ -2,3 +2,9 @@
 <div>
 	<p>Order: {{item.order_num}}</p>
 </div>
+<h4>Tagged As</h4>
+<ul class="list-group">
+	{{#each item.tags}}
+		<li class="list-group-item"><a href="{{../baseUrl}}{{this.url}}/{{this.id}}">{{this}}</a></li>
+	{{/each}}
+</ul>
