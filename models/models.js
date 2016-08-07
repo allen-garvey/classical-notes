@@ -52,10 +52,6 @@ Model.prototype.dbFieldsSelect = function(){
 //pool is the database pool to be used
 //doneCallback is called when retrieving all models are done - it is passed an error and array of results
 Model.prototype.getRelatedFields = function(pool, doneCallback){
-	// if(!this.relatedFields){
-	// 	doneCallback(null, []);
-	// 	return;
-	// }
 	async.map(this.fields.filter(function(field){return field.model;}), function(item, done){
 		var model = models[item.model];
 		pool.query(model.getAllQuery, function(err, rows, fields){
