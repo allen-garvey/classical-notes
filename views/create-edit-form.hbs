@@ -15,7 +15,7 @@
 		{{#each model.fields }}
 			{{#if this.model }}
 				<div class="form-group">
-					<label>
+					<label {{#if this.non_required}}class="non-required"{{/if}}>
 						{{this.display}}
 						<select class="form-control" name="{{this.name}}">
 							{{#each this.items}}
@@ -26,7 +26,7 @@
 				</div>		
 			{{else}}
 				<div class="form-group">
-					<label>{{this.display}}
+					<label {{#if this.non_required}}class="non-required"{{/if}}>{{this.display}}
 							<input class="form-control" type="{{this.type}}" name="{{this.name}}" {{#if ../presetData}} value="{{lookup ../presetData this.name}}" {{/if}} {{#if this.placeholder}} placeholder="{{this.placeholder}}" {{/if}}/>
 					</label>
 				</div>

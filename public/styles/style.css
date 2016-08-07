@@ -39,3 +39,9 @@
 .input-form-wrapper{
 	margin-top: 2em;
 }
+label.non-required{
+	font-weight: normal;
+}
+.form-control{
+	width: 16em;
+}
