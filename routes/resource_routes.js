@@ -148,7 +148,6 @@ for(let key in models){
 		context.model = model;
 		console.log(context.model.getQueryWithRelated());
 		pool.query(context.model.getQueryWithRelated(), [id], function(err, rows, fields){
-			console.log(rows);
 	    	if(err){
 	     		next(err);
 	      		return;
