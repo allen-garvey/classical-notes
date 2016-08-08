@@ -11,9 +11,12 @@ A web application that lets you create, edit update and delete information about
 
 ## Getting Started (local development)
 
+* Install MySql and start the MySql server
+* In `config/db.js` in the project folder, enter the credentials for the database connection
+* Run the queries contained in `migrations/create_tables.sql` in MySql to initialize the database tables
 * `cd` to root of project
 * Type `npm install` to install dependencies
-* Type `npm start` to start project
+* Type `npm start` to start server
 * Navigate your browser to `http://localhost:3000`
 
 ## Deploying using Amazon Elastic Beanstalk (as of 2016)
