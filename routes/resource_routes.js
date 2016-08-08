@@ -119,6 +119,7 @@ for(let key in models){
 			res.redirect('/'+model.url+'/new');
 			return;
 		}
+		console.log(model.insertQuery);
 		pool.query(model.insertQuery, modelData,
 			function(err, result){
 				//problem saving in the database
