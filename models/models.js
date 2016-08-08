@@ -226,9 +226,9 @@ models.Tag.prototype.toString = function(){
 }
 
 models.MovementsTag = function(data){
-	for(var key in data){
-		this[key] = data[key];
-	}
+	ORMCreator.call(this, data, models.movementsTags);
+	ORMAddOne.call(this, data, 'movements');
+	ORMAddOne.call(this, data, 'tags');
 }
 models.MovementsTag.prototype.toString = function(){
 	return this.movement_id + ' ' + this.tag_id;
@@ -389,7 +389,17 @@ models.movementsTags = new Model({
 				}
 			  ],
 	getQueryWithRelated :	function(){
-								return this.getQuery;
+								var modelTable = this.dbTable;
+								return  'SELECT ' +
+										this.dbFieldsSelect().join(',') + ',' + 
+										models.movements.dbFieldsSelect().join(',') + 
+										',' + models.movements.dbTable + '.id AS ' + models.movements.foreignKeyName +
+										',' + models.tags.dbFieldsSelect().join(',') + 
+										',' + models.tags.dbTable + '.id AS ' + models.tags.foreignKeyName +
+								        ' FROM ' + modelTable +
+								        ' INNER JOIN ' + models.tags.dbTable + ' ON ' + modelTable + '.' + models.tags.foreignKeyName + '=' + models.tags.dbTable + '.id' +
+								        ' INNER JOIN ' + models.movements.dbTable + ' ON ' + modelTable + '.' + models.movements.foreignKeyName + '=' + models.movements.dbTable + '.id ' +
+								        ' WHERE ' + modelTable + '.id=?';
 							}
 });
 
